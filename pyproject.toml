@@ -1,0 +1,14 @@
+[project]
+name = "tdl"
+description = "A todolist cli app in python"
+version = "0.0.1"
+readme = { file = "README.md", content-type = "text/markdown" }
+license = { file = "LICENSE" }
+dependencies = []
+
+[project.scripts]
+tdl = "tdl.start:main"
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"

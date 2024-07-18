@@ -1,0 +1,19 @@
+# Environments
+.envrc
+.direnv
+.venv
+
+# nix-build
+result
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+dist/
+*.egg-info/
+
+# Editor
+.vscode
