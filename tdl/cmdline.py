@@ -18,9 +18,10 @@ def cmd_parser():
     )
     parser_add.add_argument(
         "-p",
-        help="set item priority (default: 1)",
+        help="set item priority. [1: lowest, 3: highest] (default: 1)",
         type=int,
         default=1,
+        choices=[1, 2, 3],
         dest="priority",
     )
 
@@ -29,7 +30,7 @@ def cmd_parser():
         "-s",
         help="Sort the display {d: date, p: priority} (default: p)",
         type=str,
-        choices="dp",
+        choices=["d", "p"],
         default="p",
         metavar="{d,p}",
         dest="sort",
