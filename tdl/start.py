@@ -1,12 +1,13 @@
-from .cmd_callback import *
 from .cmdline import cmd_parser
+from .tdl import TDL
 
 
 def main():
     args = cmd_parser()
+    tdl = TDL()
     if args.command == "add":
-        add_item(args.message, args.priority)
+        tdl.add_item(message=args.message, priority=args.priority)
     elif args.command == "ls":
-        show_list(args.sort)
+        tdl.show_list(sort_by=args.sort_by)
     elif args.command == "del":
-        delete_item()
+        tdl.delete_item(sort_by=args.sort_by)

@@ -18,26 +18,35 @@ def cmd_parser():
     )
     parser_add.add_argument(
         "-p",
-        help="set item priority. [1: lowest, 3: highest] (default: 1)",
+        help="set item priority. {1: lowest, 3: highest} (default: 1)",
         type=int,
         default=1,
-        choices=[1, 2, 3],
+        choices=(1, 2, 3),
         dest="priority",
     )
 
     parser_show = cmd_subparser.add_parser("ls", help="list items")
     parser_show.add_argument(
         "-s",
-        help="Sort the display {d: date, p: priority} (default: p)",
+        help="Sort the display {o: oldest first, n: newest first, p: priority} (default: o)",
         type=str,
-        choices=["d", "p"],
-        default="p",
-        metavar="{d,p}",
-        dest="sort",
+        choices=("o", "n", "p"),
+        default="o",
+        metavar="{o,n,p}",
+        dest="sort_by",
     )
 
-    # TODO: add delete sub-command
     parser_delete = cmd_subparser.add_parser("del", help="delete an item from list")
+    # FIX: duplicate subparser argument '-s'
+    parser_delete.add_argument(
+        "-s",
+        help="Sort the display {o: oldest first, n: newest first, p: priority} (default: o)",
+        type=str,
+        choices=("o", "n", "p"),
+        default="o",
+        metavar="{o,n,p}",
+        dest="sort_by",
+    )
 
     args = parser.parse_args(
         # show help when used without any arguments
