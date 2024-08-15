@@ -1,10 +1,10 @@
 [project]
 name = "tdl"
 description = "A todolist cli app in python"
-version = "0.0.1"
+version = "1.0"
 readme = { file = "README.md", content-type = "text/markdown" }
 license = { file = "LICENSE" }
-dependencies = []
+dependencies = ["rich"]
 
 [project.scripts]
 tdl = "tdl.start:main"
