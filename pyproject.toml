@@ -4,7 +4,8 @@ description = "A todolist cli app in python"
 version = "1.0"
 readme = { file = "README.md", content-type = "text/markdown" }
 license = { file = "LICENSE" }
-dependencies = ["rich"]
+dependencies = ["rich", "arrow"]
+requires-python = ">= 3.12"
 
 [project.scripts]
 tdl = "tdl.start:main"
