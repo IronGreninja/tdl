@@ -1,12 +1,13 @@
 import csv
-from datetime import datetime as DT
 from pathlib import Path
 
+import arrow
 from rich import box
 from rich.console import Console
 from rich.table import Table
 
 console = Console()
+DT_format = "YYYY-MM-DD HH:mm:ss ZZZ"
 
 
 class TDL:
@@ -31,7 +32,7 @@ class TDL:
             writer.writerows(self.todolist)
 
     def add_item(self, priority: bool, message: str) -> None:
-        DT_now = str(DT.today())
+        DT_now = arrow.now().format(DT_format)
         new_id = len(self.todolist) + 1
         field_val_zip = zip(TDL.fields, (new_id, message, DT_now, None, priority))
         csv_row = dict(field_val_zip)
@@ -59,15 +60,18 @@ class TDL:
 
             if row[-1] == "True":  # priority is True
                 row[0] = f"[red]{row[0]}[/]"  # red id color is priority item
+            row[2] = arrow.get(row[2], DT_format).humanize()
+            if row[3] != "":
+                row[3] = arrow.get(row[3], DT_format).humanize()
             table.add_row(*row[:-1])  # dont add priority
         console.print(table)
 
     def mark_done_item(self, id: int) -> None:
         try:
             if self.todolist[id - 1]["CompletedOn"] != "":
-                console.print("Item alreadey marked as Completed")
+                console.print("Item already marked as Completed")
             else:
-                DT_now = str(DT.today())
+                DT_now = arrow.now().format(DT_format)
                 self.todolist[id - 1]["CompletedOn"] = DT_now
                 self.write_csvfile()
         except IndexError:
