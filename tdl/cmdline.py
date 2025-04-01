@@ -31,7 +31,7 @@ def cmd_parser():
         dest="priority",
     )
     parser_show.add_argument(
-        "-a", help="Also show completed items", action="store_true", dest="showAll"
+        "-c", help="show only completed items", action="store_true", dest="done"
     )
 
     parser_done = cmd_subparser.add_parser("done", help="Mark an item as completed")

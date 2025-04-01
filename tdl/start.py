@@ -8,6 +8,6 @@ def main():
     if args.command == "add":
         tdl.add_item(message=args.message, priority=args.priority)
     elif args.command == "ls":
-        tdl.show_list(priority=args.priority, showAll=args.showAll)
+        tdl.show_list(priority=args.priority, done=args.done)
     elif args.command == "done":
         tdl.mark_done_item(id=args.ID)
