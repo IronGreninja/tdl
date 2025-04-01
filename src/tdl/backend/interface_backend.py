@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from pathlib import Path
+from .models import ListEntry, ListEntry_R
 
 
 class IBackend(ABC):
@@ -15,27 +16,20 @@ class IBackend(ABC):
             raise
 
     @abstractmethod
-    def Insert(self, message: str, createdOn: str, priority: int) -> None:
+    def Insert(self, entry: ListEntry) -> None:
         """
         Inserts a new item
         """
 
     @abstractmethod
-    def Read(
-        self, done: bool = False, priority: bool = False
-    ) -> list[dict[str, str | None | int]]:
+    def Read(self, done: bool = False, priority: bool = False) -> list[ListEntry_R]:
         """
         done: Returns only completed items
         priority: Returns only priority items
-
-        Returns list of todo items where each row is
-        {id: int, priority: int, message: str, createdOn: str, completedOn: str | None }
-
-        if done=False, completedOn is not in dict
         """
 
     @abstractmethod
-    def MarkDone(self, id: int, completedOn: str) -> int:
+    def MarkDone(self, id: int, completed_on: str) -> int:
         """
         Marks an item of (id) as done on (completedOn).
 

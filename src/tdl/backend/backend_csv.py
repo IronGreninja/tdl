@@ -6,7 +6,6 @@ from .interface_backend import IBackend
 
 
 class Bcsv(IBackend):
-
     fields = ("id", "priority", "message", "createdOn", "completedOn")
 
     def __init__(self, datafile: Path | None = None) -> None:

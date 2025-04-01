@@ -24,13 +24,14 @@ def cmd_parser():
     )
 
     parser_show = cmd_subparser.add_parser("ls", help="list items")
-    parser_show.add_argument(
+    group = parser_show.add_mutually_exclusive_group()
+    group.add_argument(
         "-p",
         help="Show only priority items",
         action="store_true",
         dest="priority",
     )
-    parser_show.add_argument(
+    group.add_argument(
         "-c", help="show only completed items", action="store_true", dest="done"
     )
 

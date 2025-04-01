@@ -1,8 +1,5 @@
-import csv
-import os
 import tomllib
 from pathlib import Path
-from platform import system
 
 import arrow
 from rich import box
@@ -10,65 +7,64 @@ from rich.console import Console
 from rich.table import Table
 
 from .backend import Backend
+from .backend.models import ListEntry, ListEntry_R
 
 console = Console()
 DT_format = "YYYY-MM-DD HH:mm:ss ZZZ"
 
 
+def timestamp():
+    return arrow.now().format(DT_format)
+
+
 class TDL:
-
-    fields = ("ID", "Message", "CreatedOn", "CompletedOn", "Priority")
-
     def __init__(self, file: Path | None = None) -> None:
-        os_name = system()
-        settings = {}
-        if os_name == "Linux":
-            config = (
-                Path(os.getenv("XDG_CONFIG_HOME") or (os.getenv("HOME") + "/.config"))
-                / "tdl/tdl.toml"
-            )
-        else:
-            raise NotImplementedError("os not supported")
-        if config.is_file():
-            with open(config, "rb") as f:
-                settings = tomllib.load(f)
+        base_dir = Path.home() / ".tdl"
+        cfg_path = base_dir / ".config.toml"
 
-        datafile = None
-        if f := settings.get("data_dir"):
-            datafile = Path(f).expanduser() / "tdl.db"
+        if cfg_path.is_file():
+            with open(cfg_path, "rb") as f:
+                cfg: dict = tomllib.load(f)
+        else:
+            cfg = {}
+
+        if f := cfg.get("data_dir"):
+            data_dir = Path(f).expanduser()
+        else:
+            data_dir = base_dir
         try:
-            self.backend = Backend[settings.get("backend") or "sqlite"](datafile)
+            self.backend = Backend[cfg.get("backend") or "sqlite"](data_dir)
         except KeyError:
             raise NotImplementedError("backend not supported")
 
     def add_item(self, priority: bool, message: str) -> None:
-        DT_now = arrow.now().format(DT_format)
-        P = {True: 1, False: 0}
-        self.backend.Insert(message=message, createdOn=DT_now, priority=P[priority])
+        self.backend.Insert(ListEntry(message, timestamp(), "", priority, ""))
 
     def show_list(self, priority: bool, done: bool) -> None:
-        todolist: list[dict[str, int | str]] = self.backend.Read(
-            priority=priority, done=done
-        )
+        todolist: list[ListEntry_R] = self.backend.Read(done, priority)
+
         if len(todolist) == 0:
             console.print("ToDo list empty")
             return
 
-        columns = list(todolist[0].keys())
+        from pprint import pp
 
-        table = Table(*columns, box=box.SIMPLE_HEAD)
+        pp(todolist)
 
-        for row in todolist:
-            values = list(row.values())
-            table.add_row(str(values[0]), str(values[1]), *values[2:])
-        console.print(table)
+        # columns = list(todolist[0].keys())
+        #
+        # table = Table(*columns, box=box.SIMPLE_HEAD)
+        #
+        # for row in todolist:
+        #     values = list(row.values())
+        #     table.add_row(str(values[0]), str(values[1]), *values[2:])
+        # console.print(table)
 
     def mark_done_item(self, id: int) -> None:
-        DT_now = arrow.now().format(DT_format)
-        err = self.backend.MarkDone(id=id, completedOn=DT_now)
-        if err == 0:
-            console.print("id updated successfully")
-        elif err == 1:
-            console.print("id does not exist")
-        elif err == 2:
-            console.print("id already marked as complete")
+        err = self.backend.MarkDone(id, timestamp())
+        err_map = {
+            0: "id updated successfully",
+            1: "id does not exist",
+            2: "id already marked as complete",
+        }
+        console.print(err_map[err])
