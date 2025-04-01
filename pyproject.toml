@@ -3,7 +3,7 @@ name = "tdl"
 description = "A todolist cli app in python"
 version = "1.0"
 readme = { file = "README.md", content-type = "text/markdown" }
-license = { file = "LICENSE" }
+license-files = ["LICENSE"]
 dependencies = ["rich", "arrow"]
 requires-python = ">= 3.12"
 
@@ -15,4 +15,9 @@ requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
-# packages = ["tdl"]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.11.2",
+]
+# packages = ["tdl", "tdl/backend"]
