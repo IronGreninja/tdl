@@ -1,7 +1,7 @@
 [project]
 name = "tdl"
 description = "A todolist cli app in python"
-version = "1.0"
+dynamic = ["version"]
 readme = { file = "README.md", content-type = "text/markdown" }
 license-files = ["LICENSE"]
 dependencies = ["rich", "arrow"]
@@ -13,6 +13,9 @@ tdl = "tdl.start:main"
 [build-system]
 requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
+
+[tool.setuptools.dynamic]
+version = { attr = "tdl.__version__" }
 
 [dependency-groups]
 dev = []

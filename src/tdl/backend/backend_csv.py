@@ -1,15 +1,17 @@
 import csv
+from dataclasses import asdict
 from pathlib import Path
-from typing import Dict, List
+from typing import Any
 
 from .interface_backend import IBackend
+from .models import ListEntry, get_fields
+
+Rfields = get_fields()
 
 
 class Bcsv(IBackend):
-    fields = ("id", "priority", "message", "createdOn", "completedOn")
-
-    def __init__(self, datafile: Path | None = None) -> None:
-        self.datafile = datafile or (Path.home() / ".tdl/tdl.csv")
+    def __init__(self, data_dir: Path) -> None:
+        self.datafile = data_dir / "tdl.csv"
         self.todo_List = []
         super().__init__(self.datafile)  # creates parent if not exists
         if not self.datafile.exists():  # creates csvfile if not exists
@@ -18,61 +20,47 @@ class Bcsv(IBackend):
             with open(self.datafile, "r", newline="") as f:
                 self.todo_List = list(csv.DictReader(f))
 
-    def Insert(self, message: str, createdOn: str, priority: int) -> None:
-        id = len(self.todo_List) + 1
-        field_val_zip = zip(self.fields, (id, priority, message, createdOn, None))
-        csv_row = dict(field_val_zip)
-        self.todo_List.append(csv_row)
+    def Insert(self, entry: ListEntry) -> None:
+        entry.id = len(self.todo_List) + 1
+        entry_dict = asdict(entry)
+        self.todo_List.append(entry_dict)
         self.write_csvfile()
 
     def write_csvfile(self) -> None:
         with open(self.datafile, "w", newline="") as f:
-            writer = csv.DictWriter(f, self.fields)
+            writer = csv.DictWriter(f, Rfields)
             writer.writeheader()
-            writer.writerows(self.todo_List)  # pyright: ignore
+            writer.writerows(self.todo_List)
 
-    def Read(
-        self, done: bool = False, priority: bool = False
-    ) -> List[Dict[str, str | None | int]]:
-        #
-        # Logic flawed
-        #
-        new_list = []
-        remove_completed = False
-        if not done:  # remove the completedOn key from all dicts in list
-            remove_completed = True
-
-        for i, val in enumerate(self.todo_List):
-            if (
-                (priority and val["priority"] == 1)
-                or (done and val["completedOn"] != "")
-                or (not done and val["completedOn"] == "")
+    def Read(self, done: bool = False, priority: bool = False) -> list[ListEntry]:
+        new_list: list[ListEntry] = []
+        for entry in self.todo_List:
+            _list_entry = self._mkListEntry(entry)
+            if done and _list_entry.completed_on == "":
+                continue
+            elif priority and (
+                _list_entry.priority is False or _list_entry.completed_on != ""
             ):
-                new_list.append(val)
-                if remove_completed:
-                    del new_list[-1]["completedOn"]
-
-        # if len(self.todo_List) == 0:
-        #     return []
-        # for i, val in enumerate(self.todo_List):
-        #     if val["completedOn"] == "":  # not completed
-        #         if done or (
-        #             priority and val["priority"] == 0
-        #         ):  # want completed or want priority
-        #             del self.todo_List[i]
-        #
-        #     else:  # completed
-        #         if priority and val["priority"] == 0:  # want priority
-        #             del self.todo_List[i]
-
+                continue
+            new_list.append(_list_entry)
         return new_list
 
-    def MarkDone(self, id: int, completedOn: str) -> int:
+    def _mkListEntry(self, E: dict[str, str | Any]) -> ListEntry:
+        return ListEntry(
+            id=int(E["id"]),
+            priority={"False": False, "True": True}[E["priority"]],
+            message=E["message"],
+            created_on=E["created_on"],
+            due_date=E["due_date"],
+            completed_on=E["completed_on"],
+        )
+
+    def MarkDone(self, id: int, completed_on: str) -> int:
         try:
-            if self.todo_List[id - 1]["completedOn"] != "":
+            if self.todo_List[id - 1]["completed_on"] != "":
                 return 2
             else:
-                self.todo_List[id - 1]["completedOn"] = completedOn
+                self.todo_List[id - 1]["completed_on"] = completed_on
                 self.write_csvfile()
                 return 0
         except IndexError:

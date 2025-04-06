@@ -1,10 +1,9 @@
-from dataclasses import dataclass
-
-fields = ("id", "message", "created_on", "due_date", "priority", "completed_on")
+from dataclasses import dataclass, fields
 
 
 @dataclass
 class ListEntry:
+    id: int | None
     message: str
     created_on: str
     due_date: str
@@ -12,6 +11,12 @@ class ListEntry:
     completed_on: str
 
 
-@dataclass
-class ListEntry_R(ListEntry):
-    id: int
+def get_fields():
+    _fields = tuple(f.name for f in fields(ListEntry))
+    return _fields
+
+
+def get_Q_fields() -> tuple[str, int]:
+    _fields = get_fields()
+    _Qfields = ",".join(_fields)
+    return (_Qfields, len(_fields))

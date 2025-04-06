@@ -7,7 +7,7 @@ from rich.console import Console
 from rich.table import Table
 
 from .backend import Backend
-from .backend.models import ListEntry, ListEntry_R
+from .backend.models import ListEntry
 
 console = Console()
 DT_format = "YYYY-MM-DD HH:mm:ss ZZZ"
@@ -18,7 +18,7 @@ def timestamp():
 
 
 class TDL:
-    def __init__(self, file: Path | None = None) -> None:
+    def __init__(self) -> None:
         base_dir = Path.home() / ".tdl"
         cfg_path = base_dir / ".config.toml"
 
@@ -38,10 +38,18 @@ class TDL:
             raise NotImplementedError("backend not supported")
 
     def add_item(self, priority: bool, message: str) -> None:
-        self.backend.Insert(ListEntry(message, timestamp(), "", priority, ""))
+        entry = ListEntry(
+            id=None,
+            message=message,
+            created_on=timestamp(),
+            due_date="",
+            priority=priority,
+            completed_on="",
+        )
+        self.backend.Insert(entry)
 
     def show_list(self, priority: bool, done: bool) -> None:
-        todolist: list[ListEntry_R] = self.backend.Read(done, priority)
+        todolist: list[ListEntry] = self.backend.Read(done, priority)
 
         if len(todolist) == 0:
             console.print("ToDo list empty")
@@ -50,15 +58,6 @@ class TDL:
         from pprint import pp
 
         pp(todolist)
-
-        # columns = list(todolist[0].keys())
-        #
-        # table = Table(*columns, box=box.SIMPLE_HEAD)
-        #
-        # for row in todolist:
-        #     values = list(row.values())
-        #     table.add_row(str(values[0]), str(values[1]), *values[2:])
-        # console.print(table)
 
     def mark_done_item(self, id: int) -> None:
         err = self.backend.MarkDone(id, timestamp())

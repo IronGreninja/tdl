@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from pathlib import Path
-from .models import ListEntry, ListEntry_R
+
+from .models import ListEntry
 
 
 class IBackend(ABC):
@@ -22,7 +23,7 @@ class IBackend(ABC):
         """
 
     @abstractmethod
-    def Read(self, done: bool = False, priority: bool = False) -> list[ListEntry_R]:
+    def Read(self, done: bool = False, priority: bool = False) -> list[ListEntry]:
         """
         done: Returns only completed items
         priority: Returns only priority items

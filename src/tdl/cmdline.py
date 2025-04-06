@@ -22,6 +22,12 @@ def cmd_parser():
         action="store_true",
         dest="priority",
     )
+    parser_add.add_argument(
+        "-d",
+        help="Set due date",
+        action="store",
+        dest="due_date",
+    )
 
     parser_show = cmd_subparser.add_parser("ls", help="list items")
     group = parser_show.add_mutually_exclusive_group()
