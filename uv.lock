@@ -1,6 +1,11 @@
 version = 1
 revision = 1
 requires-python = ">=3.12"
+resolution-markers = [
+    "sys_platform == 'darwin'",
+    "platform_machine == 'aarch64' and sys_platform == 'linux'",
+    "(platform_machine != 'aarch64' and sys_platform == 'linux') or (sys_platform != 'darwin' and sys_platform != 'linux')",
+]
 
 [[package]]
 name = "arrow"
@@ -81,7 +86,6 @@ wheels = [
 
 [[package]]
 name = "tdl"
-version = "1.0"
 source = { editable = "." }
 dependencies = [
     { name = "arrow" },
@@ -93,6 +97,9 @@ requires-dist = [
     { name = "arrow" },
     { name = "rich" },
 ]
+
+[package.metadata.requires-dev]
+dev = []
 
 [[package]]
 name = "types-python-dateutil"

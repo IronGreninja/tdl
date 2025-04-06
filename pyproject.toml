@@ -11,11 +11,14 @@ requires-python = ">= 3.12"
 tdl = "tdl.start:main"
 
 [build-system]
-requires = ["setuptools"]
+requires = ["setuptools", "setuptools-git-versioning"]
 build-backend = "setuptools.build_meta"
 
-[tool.setuptools.dynamic]
-version = { attr = "tdl.__version__" }
+[tool.setuptools-git-versioning]
+enabled = true
+
+# [tool.setuptools.dynamic]
+# version = { attr = "tdl.__version__" }
 
 [dependency-groups]
 dev = []
