@@ -1,6 +1,7 @@
-# ToDo List cli
+## Features
 
-Basic aah cli app with python, built for practice.
+- Customizable with a Config file.
+- Multiple storage backends.
 
 ## Usage
 
@@ -20,18 +21,25 @@ options:
   -h, --help     show this help message and exit
 ```
 
-### Development
+### Configuration
+
+Some options can be set in a config file, which has the following defaults:
+
+```toml
+# ~/.tdl/.config.toml
+
+data_dir = "~/.tdl" # todo list storage directory
+backend = "sqlite" # | csv
+```
+
+## Development
 
 1. Clone the repo and cd into it.
-2. Create a venv and enter it: `python -m venv .venv && source .venv/bin/activate`. This project is a flake so nix users can instead just do: `nix develop`(ensures venv and enters it).
-3. Do an editable install: `pip install -e .`
+2. Have `uv` installed (Nix users can just `nix develop` to get a devShell with deps).
+3. Run: `uv sync`.
+4. Activate the venv.
 
-### Install
+### TODO
 
-#### NixOS
-
-[Example Derivation](./nix/build.nix). Change `src` to `fetchFromGitHub` this repo and include it in system/home packages.
-
-### ToDo
-
-- [ ] Add option to delete done items
+- [ ] Add option to delete done items.
+- [ ] Pretty print the output with arrow.
