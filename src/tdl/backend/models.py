@@ -11,6 +11,16 @@ class ListEntry:
     completed_on: str
 
 
+fieldDisplayName: dict[str, str] = {
+    "id": "ID",
+    "message": "Message",
+    "created_on": "Created On",
+    "due_date": "Due Date",
+    "priority": "Priority",
+    "completed_on": "Completed On",
+}
+
+
 def get_fields():
     _fields = tuple(f.name for f in fields(ListEntry))
     return _fields

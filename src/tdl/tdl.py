@@ -2,14 +2,11 @@ import tomllib
 from pathlib import Path
 
 import arrow
-from rich import box
-from rich.console import Console
-from rich.table import Table
 
 from .backend import Backend
 from .backend.models import ListEntry
+from .display import DisplayList, console
 
-console = Console()
 DT_format = "YYYY-MM-DD HH:mm:ss ZZZ"
 
 
@@ -24,16 +21,16 @@ class TDL:
 
         if cfg_path.is_file():
             with open(cfg_path, "rb") as f:
-                cfg: dict = tomllib.load(f)
+                self.cfg: dict = tomllib.load(f)
         else:
-            cfg = {}
+            self.cfg = {}
 
-        if f := cfg.get("data_dir"):
+        if f := self.cfg.get("data_dir"):
             data_dir = Path(f).expanduser()
         else:
             data_dir = base_dir
         try:
-            self.backend = Backend[cfg.get("backend") or "sqlite"](data_dir)
+            self.backend = Backend[self.cfg.get("backend") or "sqlite"](data_dir)
         except KeyError:
             raise NotImplementedError("backend not supported")
 
@@ -52,12 +49,12 @@ class TDL:
         todolist: list[ListEntry] = self.backend.Read(done, priority)
 
         if len(todolist) == 0:
-            console.print("ToDo list empty")
+            console.print("!!ToDo List empty!!")
             return
-
-        from pprint import pp
-
-        pp(todolist)
+        DisplayList(
+            todoList=todolist,
+            style=self.cfg.get("style"),
+        )()
 
     def mark_done_item(self, id: int) -> None:
         err = self.backend.MarkDone(id, timestamp())

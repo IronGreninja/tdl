@@ -28,8 +28,22 @@ Some options can be set in a config file, which has the following defaults:
 ```toml
 # ~/.tdl/.config.toml
 
-data_dir = "~/.tdl" # todo list storage directory
+data_dir = "~/.tdl" # ToDo List storage directory
 backend = "sqlite" # | csv
+
+# colors of the displayed table
+# each entry is a string containing a rich' style definition
+# see: https://rich.readthedocs.io/en/stable/style.html#defining-styles
+[style]
+# $field is one of (id, message, created_on, due_date, priority, completed_one)
+title = "bold italic #C6A14D"
+col_header = "bold blue" # default for all column headers
+# col_header_$field = "" # override column header for specific field
+col = "" # default for all columns
+# col_$field = "" # override column for specific field
+col_id = "bold blue"
+row_priority_override = "bold red" # entire row style for priority entries
+
 ```
 
 ## Development
