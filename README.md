@@ -56,4 +56,3 @@ row_priority_override = "bold red" # entire row style for priority entries
 ### TODO
 
 - [ ] Add option to delete done items.
-- [ ] Pretty print the output with arrow.

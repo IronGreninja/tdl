@@ -3,9 +3,14 @@ name = "tdl"
 description = "A todolist cli app in python"
 dynamic = ["version"]
 readme = { file = "README.md", content-type = "text/markdown" }
+license = "MIT"
 license-files = ["LICENSE"]
 dependencies = ["rich", "arrow"]
 requires-python = ">= 3.12"
+classifiers = [
+  "Operating System :: OS Independent",
+  "Environment :: Console"
+]
 
 [project.scripts]
 tdl = "tdl.start:main"
