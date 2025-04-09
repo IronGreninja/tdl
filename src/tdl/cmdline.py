@@ -1,8 +1,13 @@
 import sys
 from argparse import ArgumentParser
 
+from .tdl import TDL
 
-def cmd_parser():
+
+def mkParser() -> ArgumentParser:
+    """
+    Parse and return command line arguments
+    """
     # create the top-level parser
     parser = ArgumentParser(
         prog="tdl",
@@ -12,7 +17,7 @@ def cmd_parser():
     cmd_subparser = parser.add_subparsers(required=True, prog="", dest="command")
 
     # create the parsers for sub-command
-    parser_add = cmd_subparser.add_parser("add", help="add item to list")
+    parser_add = cmd_subparser.add_parser("do", help="add item to list")
     parser_add.add_argument(
         "-m", help="item message", metavar="MSG", required=True, dest="message"
     )
@@ -46,13 +51,20 @@ def cmd_parser():
         "-i", help="ID to mark", required=True, type=int, dest="ID"
     )
 
-    args = parser.parse_args(
+    cmd_subparser.add_parser("clear", help="clear all completed items")
+
+    return parser
+
+
+def start():
+    args = mkParser().parse_args(
         # show help when used without any arguments
         args=None if sys.argv[1:] else ["--help"]
+        # ["--help"]
     )
-    return args
+    TDL(args)()
 
 
 if __name__ == "__main__":
-    args = cmd_parser()
+    args = mkParser().parse_args(["ls"])
     print(args)

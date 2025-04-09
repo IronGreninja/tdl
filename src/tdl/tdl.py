@@ -1,4 +1,5 @@
 import tomllib
+from argparse import Namespace
 from pathlib import Path
 
 import arrow
@@ -15,7 +16,9 @@ def timestamp():
 
 
 class TDL:
-    def __init__(self) -> None:
+    def __init__(self, args: Namespace) -> None:
+        self.args = args
+
         base_dir = Path.home() / ".tdl"
         cfg_path = base_dir / ".config.toml"
 
@@ -34,19 +37,29 @@ class TDL:
         except KeyError:
             raise NotImplementedError("backend not supported")
 
-    def add_item(self, priority: bool, message: str) -> None:
+    def __call__(self) -> None:
+        {
+            "do": self.add_item,
+            "ls": self.show_list,
+            "done": self.mark_done_item,
+            "clear": self.clear_done,
+        }[self.args.command]()
+
+    def add_item(self) -> None:
         entry = ListEntry(
             id=None,
-            message=message,
+            message=self.args.message,
             created_on=timestamp(),
             due_date="",
-            priority=priority,
+            priority=self.args.priority,
             completed_on="",
         )
         self.backend.Insert(entry)
 
-    def show_list(self, priority: bool, done: bool) -> None:
-        todolist: list[ListEntry] = self.backend.Read(done, priority)
+    def show_list(self) -> None:
+        todolist: list[ListEntry] = self.backend.Read(
+            self.args.done, self.args.priority
+        )
 
         if len(todolist) == 0:
             console.print("!!ToDo List empty!!")
@@ -56,11 +69,14 @@ class TDL:
             style=self.cfg.get("style"),
         )()
 
-    def mark_done_item(self, id: int) -> None:
-        err = self.backend.MarkDone(id, timestamp())
+    def mark_done_item(self) -> None:
+        err = self.backend.MarkDone(self.args.id, timestamp())
         err_map = {
             0: "id updated successfully",
             1: "id does not exist",
             2: "id already marked as complete",
         }
         console.print(err_map[err])
+
+    def clear_done(self):
+        console.print("[bold red]Not Implemented")
