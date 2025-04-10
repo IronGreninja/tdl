@@ -7,18 +7,19 @@
 
 ```sh
 $ tdl -h
-usage: tdl [-h] {add,ls,done} ...
+usage: tdl [-h] {do,ls,done,clear} ...
 
 Manage a todo-list
 
 positional arguments:
-  {add,ls,done}
-    add          add item to list
-    ls           list items
-    done         Mark an item as completed
+  {do,ls,done,clear}
+    do                add item to list
+    ls                list items
+    done              Mark an item as completed
+    clear             clear all completed items
 
 options:
-  -h, --help     show this help message and exit
+  -h, --help          show this help message and exit
 ```
 
 ### Configuration
