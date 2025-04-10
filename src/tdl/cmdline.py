@@ -44,6 +44,11 @@ def mkParser() -> ArgumentParser:
     )
     group.add_argument("-a", help="show all items", action="store_true", dest="all")
 
+    parser_done = cmd_subparser.add_parser("done", help="Mark an item as completed")
+    parser_done.add_argument(
+        "-i", help="ID to mark", required=True, type=int, dest="id"
+    )
+
     cmd_subparser.add_parser("clear", help="clear all completed items")
 
     return parser
