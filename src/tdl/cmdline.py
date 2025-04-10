@@ -37,19 +37,12 @@ def mkParser() -> ArgumentParser:
     parser_show = cmd_subparser.add_parser("ls", help="list items")
     group = parser_show.add_mutually_exclusive_group()
     group.add_argument(
-        "-p",
-        help="Show only priority items",
-        action="store_true",
-        dest="priority",
+        "-p", help="Show only priority items", action="store_true", dest="priority"
     )
     group.add_argument(
         "-c", help="show only completed items", action="store_true", dest="done"
     )
-
-    parser_done = cmd_subparser.add_parser("done", help="Mark an item as completed")
-    parser_done.add_argument(
-        "-i", help="ID to mark", required=True, type=int, dest="ID"
-    )
+    group.add_argument("-a", help="show all items", action="store_true", dest="all")
 
     cmd_subparser.add_parser("clear", help="clear all completed items")
 
@@ -66,5 +59,5 @@ def start():
 
 
 if __name__ == "__main__":
-    args = mkParser().parse_args(["ls"])
+    args = mkParser().parse_args()
     print(args)

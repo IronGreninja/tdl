@@ -24,12 +24,15 @@ class Bsqlite(IBackend):
         with self.DBOpen() as cursor:
             cursor.execute(Q, _values)
 
-    def Read(self, done: bool = False, priority: bool = False) -> list[ListEntry]:
-        where = ""
-        if done:
+    def Read(self, ls_strat: str) -> list[ListEntry]:
+        if ls_strat == "done":
             where = "completed_on != ''"
-        elif priority:
+        elif ls_strat == "priority":
             where = "priority IS TRUE AND completed_on = ''"
+        elif ls_strat == "all":
+            where = ""
+        else:  # pending items
+            where = "completed_on == ''"
 
         Q = Bsqlite.Q_select
         if where != "":

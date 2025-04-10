@@ -32,17 +32,25 @@ class Bcsv(IBackend):
             writer.writeheader()
             writer.writerows(self.todo_List)
 
-    def Read(self, done: bool = False, priority: bool = False) -> list[ListEntry]:
+    def Read(self, ls_strat: str) -> list[ListEntry]:
         new_list: list[ListEntry] = []
+
         for entry in self.todo_List:
             _list_entry = self._mkListEntry(entry)
-            if done and _list_entry.completed_on == "":
-                continue
-            elif priority and (
-                _list_entry.priority is False or _list_entry.completed_on != ""
-            ):
-                continue
-            new_list.append(_list_entry)
+            isComplete: bool = _list_entry.completed_on != ""
+            include = False
+
+            if ls_strat == "done" and isComplete:
+                include = True
+            elif ls_strat == "priority" and _list_entry.priority and not isComplete:
+                include = True
+            elif ls_strat == "pending" and not isComplete:
+                include = True
+            elif ls_strat == "all":
+                include = True
+
+            if include:
+                new_list.append(_list_entry)
         return new_list
 
     def _mkListEntry(self, E: dict[str, str | Any]) -> ListEntry:

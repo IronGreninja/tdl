@@ -57,13 +57,25 @@ class TDL:
         self.backend.Insert(entry)
 
     def show_list(self) -> None:
-        todolist: list[ListEntry] = self.backend.Read(
-            self.args.done, self.args.priority
-        )
+        a = self.args
+        if a.done:
+            ls_strat = "done"
+        elif a.priority:
+            ls_strat = "priority"
+        elif a.all:
+            ls_strat = "all"
+        else:
+            ls_strat = "pending"
+
+        todolist: list[ListEntry] = self.backend.Read(ls_strat)
 
         if len(todolist) == 0:
-            console.print("!!ToDo List empty!!")
+            if ls_strat == "all":
+                console.print("!!ToDo List empty!!")
+            else:
+                console.print(f"!!No {ls_strat} items!!")
             return
+
         DisplayList(
             todoList=todolist,
             style=self.cfg.get("style"),

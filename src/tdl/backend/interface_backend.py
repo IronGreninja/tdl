@@ -23,10 +23,13 @@ class IBackend(ABC):
         """
 
     @abstractmethod
-    def Read(self, done: bool = False, priority: bool = False) -> list[ListEntry]:
+    def Read(self, ls_strat: str) -> list[ListEntry]:
         """
-        done: Returns only completed items
-        priority: Returns only priority items
+        ls_strat: print strategy. Can be one of -
+            done: only completed items
+            priority: only priority (not completed) items
+            all: all items
+            pending: not completed items
         """
 
     @abstractmethod
