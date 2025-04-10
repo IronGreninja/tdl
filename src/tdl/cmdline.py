@@ -29,7 +29,11 @@ def mkParser() -> ArgumentParser:
     )
     parser_add.add_argument(
         "-d",
-        help="Set due date",
+        help="""
+            Set due date relative to now.
+            Ex - '2d', '3h', '2d3h'
+            (d = days, h = hours)
+        """,
         action="store",
         dest="due_date",
     )

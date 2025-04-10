@@ -32,6 +32,11 @@ Some options can be set in a config file, which has the following defaults:
 data_dir = "~/.tdl" # ToDo List storage directory
 backend = "sqlite" # | csv
 
+# timestamp display format
+# see: https://arrow.readthedocs.io/en/latest/guide.html#supported-tokens
+timestamp_format = "ddd, D/MMM/YY"
+due_date_humanize = false # whether to display Due Date in a human friendly format
+
 # colors of the displayed table
 # each entry is a string containing a rich' style definition
 # see: https://rich.readthedocs.io/en/stable/style.html#defining-styles
@@ -56,4 +61,4 @@ row_priority_override = "bold red" # entire row style for priority entries
 
 ### TODO
 
-- [ ] Add option to delete done items.
+- [ ] Add option to mark done items in bulk.

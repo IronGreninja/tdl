@@ -1,5 +1,6 @@
 from dataclasses import asdict
 
+import arrow
 from rich import box
 from rich.console import Console
 from rich.table import Table
@@ -28,12 +29,17 @@ class DisplayList:
         *,
         todoList: list[ListEntry],
         style: dict[str, str] | None = None,
+        timestamp_format: str,
+        humanize: bool = False,
     ):
         self.todoList = todoList
         if style:
             self.style = default_style | style  # Merge styles
         else:
             self.style = default_style
+
+        self.timestamp_format = timestamp_format
+        self.humanize = humanize
 
     def __call__(self) -> None:
         console.print(self.mkTable())
@@ -59,6 +65,18 @@ class DisplayList:
         for entry in self.todoList:
             row_entries: list[Text] = []
             for col, val in asdict(entry).items():
+                # Format timestamp
+                if (
+                    self.timestamp_format
+                    and col in ("created_on", "due_date", "completed_on")
+                    and val != ""
+                ):
+                    arw = arrow.get(val)
+                    if col == "due_date" and self.humanize:
+                        val = arw.humanize(arrow.now(), granularity=["day", "hour"])
+                    else:
+                        val = arw.format(self.timestamp_format)
+
                 override_style = self.style["row_priority_override"]
                 if entry.priority and override_style != "":
                     style = override_style

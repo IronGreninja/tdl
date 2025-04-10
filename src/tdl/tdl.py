@@ -8,11 +8,9 @@ from .backend import Backend
 from .backend.models import ListEntry
 from .display import DisplayList, console
 
-DT_format = "YYYY-MM-DD HH:mm:ss ZZZ"
-
 
 def timestamp():
-    return arrow.now().format(DT_format)
+    return arrow.now().format()
 
 
 class TDL:
@@ -45,12 +43,30 @@ class TDL:
             "clear": self.clear_done,
         }[self.args.command]()
 
+    def _parseDueDate(self) -> str:
+        if not self.args.due_date:
+            return ""
+        import re
+
+        pattern = re.compile(r"((\d+)d)?((\d+)h)?")  # [1]: days, [3]: hours
+        match = pattern.fullmatch(self.args.due_date)
+        if not match:
+            raise Exception("Can't parse Due Date")
+        grps = match.groups()
+        if grps[0] is None and grps[2] is None:
+            return ""
+        days = int(grps[1]) if grps[1] else 0
+        hrs = int(grps[3]) if grps[3] else 0
+        due_date_str = arrow.now().shift(days=days, hours=hrs).format()
+        console.print(due_date_str)
+        return due_date_str
+
     def add_item(self) -> None:
         entry = ListEntry(
             id=None,
             message=self.args.message,
             created_on=timestamp(),
-            due_date="",
+            due_date=self._parseDueDate(),
             priority=self.args.priority,
             completed_on="",
         )
@@ -79,6 +95,8 @@ class TDL:
         DisplayList(
             todoList=todolist,
             style=self.cfg.get("style"),
+            timestamp_format=self.cfg.get("timestamp_format", "ddd, D/MMM/YY"),
+            humanize=self.cfg.get("due_date_humanize", False),
         )()
 
     def mark_done_item(self) -> None:
