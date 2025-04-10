@@ -91,4 +91,4 @@ class TDL:
         console.print(err_map[err])
 
     def clear_done(self):
-        console.print("[bold red]Not Implemented")
+        self.backend.ClearDone()

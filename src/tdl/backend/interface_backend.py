@@ -42,3 +42,9 @@ class IBackend(ABC):
             1 if id doesn't exist
             2 if id was already marked as done
         """
+
+    @abstractmethod
+    def ClearDone(self) -> None:
+        """
+        Delete done items
+        """

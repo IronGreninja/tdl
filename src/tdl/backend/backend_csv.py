@@ -73,3 +73,13 @@ class Bcsv(IBackend):
                 return 0
         except IndexError:
             return 1
+
+    def ClearDone(self) -> None:
+        new_list: list[dict[str, str | Any]] = []
+
+        for entry in self.todo_List:
+            isComplete: bool = entry.get("completed_on", "") != ""
+            if not isComplete:
+                new_list.append(entry)
+        self.todo_List = new_list
+        self.write_csvfile()

@@ -58,6 +58,11 @@ class Bsqlite(IBackend):
             else:
                 return 0
 
+    def ClearDone(self) -> None:
+        Q_delete_done = f"DELETE FROM {Bsqlite.table} WHERE completed_on != ''"
+        with self.DBOpen() as cursor:
+            cursor.execute(Q_delete_done)
+
     @contextmanager
     def DBOpen(self):
         def mkListEntry(_, row):
